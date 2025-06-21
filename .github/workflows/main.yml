@@ -23,7 +23,7 @@
           run: bandit -ll -ii -r . -f json -o bandit-report.json  # Run Bandit with options, output JSON report
 
         - name: Upload Bandit Artifact Report  # Step to upload Bandit report as artifact
-          uses: actions/upload-artifact@v3  # GitHub Action to upload artifacts
+          uses: actions/upload-artifact@v2  # GitHub Action to upload artifacts
           if: always()  # Always run this step, even if previous steps fail
           with:
             name: bandit-findings-report  # Name of the uploaded artifact
