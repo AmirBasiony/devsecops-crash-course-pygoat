@@ -64,9 +64,14 @@
             dockerhub-password: ${{ secrets.REPO_PWD }}
             command: quickview, cves
             only-severities: critical, high
-  
+            sarif-file: sarif-report.sarif
 
-
+        - name: Upload Docker Scout Artifact Report  # Step to upload Bandit report as artifact
+          uses: actions/upload-artifact@v4  # GitHub Action to upload artifacts
+          if: always()  # Always run this step, even if previous steps fail
+          with:
+            name: docker-scout-findings  # Name of the uploaded artifact
+            path: sarif-report.sarif  # Path to the report file
             
         
             
