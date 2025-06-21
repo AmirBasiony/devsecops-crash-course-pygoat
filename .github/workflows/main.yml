@@ -29,16 +29,16 @@
             name: bandit-findings-report  # Name of the uploaded artifact
             path: bandit-report.json  # Path to the report file
 
-    image_scan:  # Job name for image scanning
-      name:  Build Image and Run Image Scan  # Display name for the job
-      runs-on: ubuntu-latest  # Use the latest Ubuntu runner
-
+    image_scan:
+      name: Build Image and Run Image Scan
+      runs-on: ubuntu-latest
+    
       steps:
-        - name: Checkout code  # Step to checkout repository code
-          uses: actions/checkout@v4  # GitHub Action to checkout code 
-
-        - name: Set Up Docker Buildx  # Step to set up Docker Buildx
-          uses: docker-practice/actions-setup-docker@v1
+        - name: Checkout code
+          uses: actions/checkout@v4
+    
+        - name: Set Up Docker Buildx
+          uses: docker-practice/actions-setup-docker@v1  # Let it install default version
 
         - name: Build Docker Image
           run: docker build -f Dockerfile -t myapp:latest .
