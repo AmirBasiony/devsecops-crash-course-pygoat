@@ -1,30 +1,53 @@
-  name: CI  # Name of the workflow
+name: CI  # Name of the workflow
 
-  on: [push]  # Trigger workflow on every push event
+on: [push]  # Trigger workflow on every push event
 
-  jobs:
-    sast_scan:  # Job name
-      name:  Run Bandit scan  # Display name for the job
-      runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+jobs:
+  sast_scan:  # Job name for Static Application Security Testing
+    name: Run Bandit scan  # Display name for the job
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
 
-      steps:
-        - name: Checkout code  # Step to checkout repository code
-          uses: actions/checkout@v2  # GitHub Action to checkout code
+    steps:
+      - name: Checkout code  # Step to checkout repository code
+        uses: actions/checkout@v4  # GitHub Action to checkout code
 
-        - name: Set Up Python  # Step to set up Python environment
-          uses: actions/setup-python@v2  # GitHub Action to set up Python
-          with:
-            python-version: 3.8  # Specify Python version
+      - name: Set Up Python  # Step to set up Python environment
+        uses: actions/setup-python@v4  # GitHub Action to set up Python
+        with:
+          python-version: 3.8  # Specify Python version
 
-        - name: Install Bandit  # Step to install Bandit tool
-          run: pip install bandit  # Install Bandit using pip
+      - name: Install Bandit  # Step to install Bandit tool
+        run: pip install bandit  # Install Bandit using pip
 
-        - name: Run Bandit Scan  # Step to run Bandit scan
-          run: bandit -ll -ii -r . -f json -o bandit-report.json  # Run Bandit with options, output JSON report
+      - name: Run Bandit Scan  # Step to run Bandit scan
+        run: bandit -ll -ii -r . -f json -o bandit-report.json  # Run Bandit with options, output JSON report
 
-        - name: Upload Bandit Artifact Report  # Step to upload Bandit report as artifact
-          uses: actions/upload-artifact@v4  # GitHub Action to upload artifacts
-          if: always()  # Always run this step, even if previous steps fail
-          with:
-            name: bandit-findings-report  # Name of the uploaded artifact
-            path: bandit-report.json  # Path to the report file
+      - name: Upload Bandit Artifact Report  # Step to upload Bandit report as artifact
+        uses: actions/upload-artifact@v4  # GitHub Action to upload artifacts
+        if: always()  # Always run this step, even if previous steps fail
+        with:
+          name: bandit-findings-report  # Name of the uploaded artifact
+          path: bandit-report.json  # Path to the report file
+
+  image_scan:  # Job name for image scanning
+    name: Build Image and Run Image Scan  # Display name for the job
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout code  # Step to checkout repository code
+        uses: actions/checkout@v4  # GitHub Action to checkout code 
+
+      - name: Set Up Docker Buildx  # Step to set up Docker Buildx (for advanced Docker builds)
+        uses: docker-practice/actions-setup-docker@v1  # GitHub Action to install Docker
+        with:
+          docker_version: '20.10.7'  # Specify Docker version
+
+      - name: Build Docker Image  # Build the Docker image for the application
+        run: docker build -f Dockerfile -t myapp:latest .  # Build Docker image using Dockerfile
+
+      - name: Docker Scout Scan  # Scan the built Docker image for vulnerabilities
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh  # Download Docker Scout installer
+          sh install-scout.sh  # Install Docker Scout CLI
+          docker scout quickview  # Run a quick overview scan
+          docker scout cves  # Scan for CVEs (vulnerabilities) in the image
