@@ -37,20 +37,23 @@
         - name: Checkout code
           uses: actions/checkout@v4
     
+        - name: Ensure daemon.json exists
+          run: |
+            sudo mkdir -p /etc/docker
+            echo '{}' | sudo tee /etc/docker/daemon.json
+    
         - name: Set Up Docker Buildx
-          uses: docker-practice/actions-setup-docker@v1  # Let it install default version
-
+          uses: docker-practice/actions-setup-docker@v1
+    
         - name: Build Docker Image
           run: docker build -f Dockerfile -t myapp:latest .
-
+    
         - name: Docker Scout Scan
           run: |
-              curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-              sh install-scout.sh
-              docker scout quickview
-              docker scout cves
-
-
+            curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+            sh install-scout.sh
+            docker scout quickview
+            docker scout cves
 
 
 
