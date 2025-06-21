@@ -65,7 +65,8 @@
             command: quickview, cves
             only-severities: critical, high
             sarif-file: sarif-report.sarif
-
+            exit-code: true
+            
         - name: Upload Docker Scout Artifact Report  # Step to upload Bandit report as artifact
           uses: actions/upload-artifact@v4  # GitHub Action to upload artifacts
           if: always()  # Always run this step, even if previous steps fail
