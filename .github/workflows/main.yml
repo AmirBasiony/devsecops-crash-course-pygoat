@@ -9,10 +9,10 @@
 
       steps:
         - name: Checkout code  # Step to checkout repository code
-          uses: actions/checkout@v4  # GitHub Action to checkout code
+          uses: actions/checkout@v2  # GitHub Action to checkout code
 
         - name: Set Up Python  # Step to set up Python environment
-          uses: actions/setup-python@v4  # GitHub Action to set up Python
+          uses: actions/setup-python@v2  # GitHub Action to set up Python
           with:
             python-version: 3.8  # Specify Python version
 
